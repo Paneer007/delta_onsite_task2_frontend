@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { Routes ,BrowserRouter as Router, Route} from "react-router-dom";
+import LoginPage from "./LoginPage/Login";
+import SignUpDisplay from "./LoginPage/Signup";
+import MainUserPage from "./HomePage/MainUserPage"
+import ErrorPage from "./ErrorPage";
+import { useEffect } from "react";
+import axios from "axios"
 function App() {
+  useEffect(()=>{
+    window.addEventListener("beforeunload",(e)=>{
+      e.preventDefault()
+      const token = localStorage.getItem('token')
+      axios.post("http://localhost:3001/api/userdata/unauthenticate",{header:{"authorization":("bearer "+token)}})
+    }) 
+  },[])
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+          <Routes>
+            <Route path="/" element={<SignUpDisplay/>}/>
+            <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/user/*" element={<MainUserPage/>}/>
+            <Route path="/error" element={<ErrorPage/>}/>
+          </Routes>
+      </Router>
     </div>
   );
 }
